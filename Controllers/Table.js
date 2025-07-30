@@ -1,3 +1,4 @@
+const { error } = require("console");
 const MF_MAP = require("../MF_MAP.json");
 const fs = require('fs');
 
@@ -16,8 +17,12 @@ const table_data = async (req,res)=>{
 
         for(code in data){
             
-
-            const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`).then((res) => res.json());
+            try{
+              const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`).then((res) => res.json());
+            }
+            catch(e){
+                return res.status(400).send(error);
+            }
             newData[code] = response?.[response.length-1]?.nav || "N/A";
         }
         const current_date = new Date();
@@ -31,7 +36,8 @@ const table_data = async (req,res)=>{
 
     }
     else{
-       for(code in data){
+        try{
+            for(code in data){
         if(MF_MAP[code]){
             console.log(MF_MAP[code]);
             newData[code]=MF_MAP[code];
@@ -45,6 +51,12 @@ const table_data = async (req,res)=>{
        console.log(newData);
         fs.writeFileSync('MF_MAP.json', JSON.stringify(newData, null, 2));
         return res.status(200).json(newData);
+
+        }
+        catch(e){
+            return res.status(400).send(e);
+        }
+       
 
 
        
