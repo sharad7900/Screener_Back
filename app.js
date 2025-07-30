@@ -14,6 +14,7 @@ const corsOption ={
     methods: "GET, PUT, PATCH, DELETE, POST, HEAD",
     credentials:true
 }
+
 app.use(cors(corsOption));
 app.use(express.json());
 app.use("/",router);
