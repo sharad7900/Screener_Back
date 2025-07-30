@@ -1,76 +1,105 @@
+const { mongo } = require("mongoose");
+const NAV_Data = require("../Model/model.js");
 const { error } = require("console");
-const MF_MAP = require("../MF_MAP.json");
-const fs = require('fs');
 
 
 
-const table_data = async (req,res)=>{
+
+
+const table_data = async (req, res) => {
 
     const data = req.body;
+    const mongolist = await NAV_Data.findById('688a09ebbe9984320e246e15');
+    // console.log(Object.entries(mongolist));
+    console.log(mongolist.toObject());
+
+   
+
     var newData = {};
+
     const current_Time = new Date();
-    const prev_date = new Date(MF_MAP.time);
-    const diff = (current_Time-prev_date)/(1000 * 60 * 60);
-    console.log(data);
+    const prev_date = new Date(mongolist.toObject()['time']);
+    const diff = (current_Time - prev_date) / (1000 * 60 * 60);
+    console.log(diff);
 
-    if(diff>=24){
+    if (diff >= 24) {
 
-        for(code in data){
-            
-            try{
-              const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`).then((res) => res.json());
+        for (code in data) {
+
+            try {
+                const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`).then((res) => res.json());
+                newData[code] = response?.[response.length - 1]?.nav || "N/A";
             }
-            catch(e){
+            catch (e) {
                 return res.status(400).send(error);
             }
-            newData[code] = response?.[response.length-1]?.nav || "N/A";
+
         }
         const current_date = new Date();
         const m = current_date.getMonth();
         const d = current_date.getDate();
         const y = current_date.getFullYear();
-        newData['time'] = new Date(y,m,d,9,30,0);
-        fs.writeFileSync('MF_MAP.json', JSON.stringify(newData, null, 2));
+        newData['time'] = new Date(y, m, d, 9, 30, 0);
+        const doc = await NAV_Data.findByIdAndUpdate(
+            '688a09ebbe9984320e246e15',newData,
+            {new: true,
+            overwrite: true,
+        });
+        
         return res.status(200).json(newData);
-  
+
 
     }
-    else{
-        try{
-            for(code in data){
-        if(MF_MAP[code]){
-            console.log(MF_MAP[code]);
-            newData[code]=MF_MAP[code];
-        }
-        else{
-            const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`).then((res) => res.json());
-            newData[code] = response?.[response.length-1]?.nav || "N/A";
-        }
-        
-       }
-       console.log(newData);
-        fs.writeFileSync('MF_MAP.json', JSON.stringify(newData, null, 2));
-        return res.status(200).json(newData);
+    else {
+        try {
+            for (let code in data) {
+                // console.log(code);
+                if (mongolist.toObject()[code]) {
+                    console.log(mongolist.toObject()[code]);
+                    newData[code] = mongolist.toObject()[code];
+                }
+                else {
+                    const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`).then((res) => res.json());
+                    newData[code] = response?.[response.length - 1]?.nav || "N/A";
+                    
+                }
+
+            }
+            console.log(newData);
+            try {
+            const doc = await NAV_Data.findByIdAndUpdate(
+            '688a09ebbe9984320e246e15',newData,
+            {new: true,
+            overwrite: true,
+        });
+
+            }
+            catch (e) {
+                console.log(e);
+            }
+            
+
+            return res.status(200).json(newData);
 
         }
-        catch(e){
+        catch (e) {
             return res.status(400).send(e);
         }
-       
 
 
-       
+
+
     }
 
-    
-    
-//    const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${key}`).then((res) => res.json());
-    return_data = {};
-    // console.log(MF_MAP.time);
 
-    return res.status(200).json(MF_MAP);
+
+    //    const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${key}`).then((res) => res.json());
+    // return_data = {};
+    // // console.log(MF_MAP.time);
+
+    return res.status(200).json();
 
 }
 
 
-module.exports = {table_data}; 
+module.exports = { table_data }; 
