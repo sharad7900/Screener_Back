@@ -8,13 +8,14 @@ const db_connect = require("./Utils/mongo.js")
 db_connect();
 
 const app = express();
-app.use(express.json());
+
 const corsOption ={
-    origin:"https://screener-rust.vercel.app/",
+    origin:"https://screener-rust.vercel.app",
     methods: "GET, PUT, PATCH, DELETE, POST, HEAD",
     credentials:true
 }
 app.use(cors(corsOption));
+app.use(express.json());
 app.use("/",router);
 
 
