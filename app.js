@@ -10,7 +10,7 @@ db_connect();
 const app = express();
 
 const corsOption ={
-    origin:["https://screener-rust.vercel.app","http://localhost:5173"],
+    origin:"https://screener-rust.vercel.app",
     methods: "GET, PUT, PATCH, DELETE, POST, HEAD",
     credentials:true
 }
