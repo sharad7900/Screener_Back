@@ -39,7 +39,7 @@ const table_data = async (req, res) => {
         const m = current_date.getMonth();
         const d = current_date.getDate();
         const y = current_date.getFullYear();
-        newData['time'] = new Date(y, m, d, 9, 30, 0);
+        newData['time'] = new Date(y, m, d, 8, 30, 0);
         const doc = await NAV_Data.findByIdAndUpdate(
             '688a09ebbe9984320e246e15',newData,
             {new: true,
