@@ -11,7 +11,7 @@ const table_data = async (req, res) => {
     const data = req.body;
     const mongolist = await NAV_Data.findById('688a09ebbe9984320e246e15');
     // console.log(Object.entries(mongolist));
-    console.log(mongolist.toObject());
+    // console.log(mongolist.toObject());
 
    
 
@@ -20,7 +20,7 @@ const table_data = async (req, res) => {
     const current_Time = new Date();
     const prev_date = new Date(mongolist.toObject()['time']);
     const diff = (current_Time - prev_date) / (1000 * 60 * 60);
-    console.log(diff);
+    // console.log(diff);
 
     if (diff >= 24) {
 
@@ -39,7 +39,7 @@ const table_data = async (req, res) => {
         const m = current_date.getMonth();
         const d = current_date.getDate();
         const y = current_date.getFullYear();
-        newData['time'] = new Date(y, m, d, 8, 30, 0);
+        newData['time'] = new Date(y, m, d, 3, 30, 0);
         const doc = await NAV_Data.findByIdAndUpdate(
             '688a09ebbe9984320e246e15',newData,
             {new: true,
