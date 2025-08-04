@@ -58,7 +58,6 @@ const table_data = async (req, res) => {
                     for (let code in data) {
                         // console.log(code);
                         if (mongolist.toObject()[code]) {
-                            console.log(mongolist.toObject()[code]);
                             newData[code] = mongolist.toObject()[code];
                         }
                         else {
@@ -68,7 +67,7 @@ const table_data = async (req, res) => {
                         }
                         
                     }
-                    console.log(newData);
+              
                     try {
                         const doc = await NAV_Data.findByIdAndUpdate(
                             '688a09ebbe9984320e246e15',newData,
@@ -87,7 +86,7 @@ const table_data = async (req, res) => {
                         
                     }
                     catch (e) {
-                        return res.status(400).send(e);
+                        return res.status(400).json(e);
                     }
                     
                     
@@ -96,9 +95,10 @@ const table_data = async (req, res) => {
                 }
             }
             catch(e){
-                return res.status(500).json({messsage:e});
+                return res.status(500).json(e);
             }
                 
+
 
 
 }
