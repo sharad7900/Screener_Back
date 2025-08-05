@@ -11,10 +11,7 @@ const table_data = async (req, res) => {
     try{
 
         const data = req.body;
-        const mongolist = await NAV_Data.findById('688a09ebbe9984320e246e15');
-        // console.log(Object.entries(mongolist));
-        // console.log(mongolist.toObject());
-        
+        const mongolist = await NAV_Data.findById('6892107e3d37236b7885428c');
         
         
         var newData = {};
@@ -42,9 +39,9 @@ const table_data = async (req, res) => {
             const m = current_date.getMonth();
             const d = current_date.getDate();
             const y = current_date.getFullYear();
-            newData['time'] = new Date(y, m, d, 3, 30, 0);
+            newData['time'] = new Date(y, m, d, 1, 0, 0);
             const doc = await NAV_Data.findByIdAndUpdate(
-                '688a09ebbe9984320e246e15',newData,
+                '6892107e3d37236b7885428c',newData,
                 {new: true,
                     overwrite: true,
                 });
@@ -70,7 +67,7 @@ const table_data = async (req, res) => {
               
                     try {
                         const doc = await NAV_Data.findByIdAndUpdate(
-                            '688a09ebbe9984320e246e15',newData,
+                            '6892107e3d37236b7885428c',newData,
                             {new: true,
                                 overwrite: true,
                             });
