@@ -54,7 +54,7 @@ const table_data = async (req, res) => {
                 try {
                     for (let code in data) {
                         // console.log(code);
-                        if (mongolist.toObject()[code]) {
+                        if (mongolist.toObject()[code] !==undefined ) {
                             newData[code] = mongolist.toObject()[code];
                         }
                         else {

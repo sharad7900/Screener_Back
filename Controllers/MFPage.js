@@ -14,7 +14,7 @@ const MFPage = async (req, res) => {
         const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getFundMetaData%${code}`);
         const data = await response.json();
         final_data['MFName'] = data['meta'][0]['name'];
-        final_data['inception'] = data['meta'][0]['inception'];
+        final_data['inception'] = data['meta'][0]['inception'].slice(0,10);
         final_data['fund_manager'] = data['meta'][0]['fund_manager'];
         final_data['ter'] = data['meta'][0]['ter'];
         final_data['exitload'] = data['exitload'][0]['exit_load_remark'];
@@ -22,7 +22,7 @@ const MFPage = async (req, res) => {
         const response2 = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`);
         const nav = await response2.json();
 
-        final_data['nav'] = nav[nav.length - 1][nav];
+        final_data['nav'] = nav[nav.length - 1]['nav'];
         final_data['graph'] = nav;
         final_data['change'] = (((nav[nav.length - 2]['nav'] - nav[nav.length - 1]['nav']) / nav[nav.length - 2]['nav']) * 100).toFixed(2);
         const inceptionDate = new Date(nav[0]['markDate'].slice(0, 10));
@@ -46,12 +46,15 @@ const MFPage = async (req, res) => {
 
 
 
-        const selected_stocks = {};
+        const selected_stocks = [];
         for (let i = 0; i < stocks.length; i++) {
 
             try {
 
-                selected_stocks[stocks[i]['isin']] = stock_codes[stocks[i]['isin']];
+                if(!stock_codes[stocks[i]['isin']]) continue;
+
+                selected_stocks.push(stock_codes[stocks[i]['isin']]);
+                // selected_stocks[stocks[i]['isin']] = stock_codes[stocks[i]['isin']];
 
             }
             catch (e) {
@@ -62,7 +65,6 @@ const MFPage = async (req, res) => {
         }
 
         final_data['selected_stock'] = selected_stocks;
-
 
 
         return res.status(200).json(final_data);
