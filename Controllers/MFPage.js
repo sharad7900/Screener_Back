@@ -24,7 +24,7 @@ const MFPage = async (req, res) => {
 
         final_data['nav'] = nav[nav.length - 1]['nav'];
         final_data['graph'] = nav;
-        final_data['change'] = (((nav[nav.length - 2]['nav'] - nav[nav.length - 1]['nav']) / nav[nav.length - 2]['nav']) * 100).toFixed(2);
+        final_data['change'] = (((nav[nav.length - 1]['nav'] - nav[nav.length - 2]['nav']) / nav[nav.length - 2]['nav']) * 100).toFixed(2);
         const inceptionDate = new Date(nav[0]['markDate'].slice(0, 10));
         const latestDate = new Date(nav[nav.length - 1]['markDate'].slice(0, 10));
         const diffInMs = latestDate - inceptionDate;
