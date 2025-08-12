@@ -40,31 +40,31 @@ const MFPage = async (req, res) => {
 
 
 
-        const filePath = path.join(__dirname, "data", "isin_to_screener.json");
-        const stock_codes_fetch = await fs.readFile(filePath, "utf-8");
-        const stock_codes = JSON.parse(stock_codes_fetch);
+        // const filePath = path.join(__dirname, "data", "isin_to_screener.json");
+        // const stock_codes_fetch = await fs.readFile(filePath, "utf-8");
+        // const stock_codes = JSON.parse(stock_codes_fetch);
 
 
 
-        const selected_stocks = [];
-        for (let i = 0; i < stocks.length; i++) {
+        // const selected_stocks = [];
+        // for (let i = 0; i < stocks.length; i++) {
 
-            try {
+        //     try {
 
-                if(!stock_codes[stocks[i]['isin']]) continue;
+        //         if(!stock_codes[stocks[i]['isin']]) continue;
 
-                selected_stocks.push(stock_codes[stocks[i]['isin']]);
-                // selected_stocks[stocks[i]['isin']] = stock_codes[stocks[i]['isin']];
+        //         selected_stocks.push(stock_codes[stocks[i]['isin']]);
+        //         // selected_stocks[stocks[i]['isin']] = stock_codes[stocks[i]['isin']];
 
-            }
-            catch (e) {
-                continue;
-            }
+        //     }
+        //     catch (e) {
+        //         continue;
+        //     }
 
 
-        }
+        // }
 
-        final_data['selected_stock'] = selected_stocks;
+        // final_data['selected_stock'] = selected_stocks;
 
 
         return res.status(200).json(final_data);
