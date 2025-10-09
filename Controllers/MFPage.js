@@ -38,8 +38,6 @@ const MFPage = async (req, res) => {
         const stocks = await response3.json();
         final_data['asset'] = stocks;
 
-
-
         // const filePath = path.join(__dirname, "data", "isin_to_screener.json");
         // const stock_codes_fetch = await fs.readFile(filePath, "utf-8");
         // const stock_codes = JSON.parse(stock_codes_fetch);

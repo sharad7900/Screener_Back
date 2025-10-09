@@ -11,7 +11,7 @@ const table_data = async (req, res) => {
     try{
 
         const data = req.body;
-        const mongolist = await NAV_Data.findById('6892107e3d37236b7885428c');
+        const mongolist = await NAV_Data.findById('68e80cbc3f62f75fe622e663');
         
         
         var newData = {};
