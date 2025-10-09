@@ -41,7 +41,7 @@ const table_data = async (req, res) => {
             const y = current_date.getFullYear();
             newData['time'] = new Date(y, m, d, 1, 0, 0);
             const doc = await NAV_Data.findByIdAndUpdate(
-                '6892107e3d37236b7885428c',newData,
+                '68e80cbc3f62f75fe622e663',newData,
                 {new: true,
                     overwrite: true,
                 });
@@ -67,7 +67,7 @@ const table_data = async (req, res) => {
               
                     try {
                         const doc = await NAV_Data.findByIdAndUpdate(
-                            '6892107e3d37236b7885428c',newData,
+                            '68e80cbc3f62f75fe622e663',newData,
                             {new: true,
                                 overwrite: true,
                             });
