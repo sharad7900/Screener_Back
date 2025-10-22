@@ -48,7 +48,7 @@ const MFPage = async (req, res) => {
         final_data['asset'] = stocks;
         
         try {
-            const [results] = await pool.query(`SELECT m.mf_code, s.ISIN, s.Symbol, s.Company, s.CMP, s.PE, s.ROCE, s.ROE, s.PromHold, s.Salesvar, s.ProfitVar, s.OPM, s.CROIC, s.Mar_Cap, s.As_on_date FROM sharad_screener.mf_holdings_data m JOIN sharad_screener.ratios s ON m.ISIN = s.ISIN WHERE m.MF_Code=${mf_code}`);
+            const [results] = await pool.query(`SELECT m.mf_code, s.ISIN, s.Symbol, s.Company, s.CMP, s.PE, s.ROCE, s.ROE, s.PromHold, s.Salesvar, s.ProfitVar, s.OPM, s.CROIC, s.Mar_Cap, s.As_on_date FROM sharad_screener.mf_holdings_data m JOIN sharad_screener.ratios s ON m.ISIN = s.ISIN WHERE m.MF_Code=${mf_code} ORDER BY m.Per DESC`);
             final_data['heatmap'] = results;
         } catch (err) {
             console.error('Error fetching heatmap data:', err);
