@@ -1,25 +1,34 @@
 const map = require("../Model/map");
 const fs = require("fs").promises;
 const path = require("path");
-const csv = require("csv-parser");
-const { composer } = require("googleapis/build/src/apis/composer");
+const pool = require('../Utils/SQL.js');
 
 
 const MFPage = async (req, res) => {
 
     const { code } = req.body;
+    let mf_code = null;
+    try {
+        const [results] = await pool.query(`SELECT Code FROM sharad_static_data.mf_static_data WHERE ISIN = "${code}";`);
+        
+        mf_code = results[0]['Code'];
+    } catch (err) {
+        console.error('Error fetching heatmap data:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
     const final_data = {};
     try {
-
-        const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getFundMetaData%${code}`);
+        
+        const response = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getFundMetaData%${mf_code}`);
         const data = await response.json();
         final_data['MFName'] = data['meta'][0]['name'];
-        final_data['inception'] = data['meta'][0]['inception'].slice(0,10);
+        final_data['inception'] = data['meta'][0]['inception'].slice(0, 10);
         final_data['fund_manager'] = data['meta'][0]['fund_manager'];
         final_data['ter'] = data['meta'][0]['ter'];
         final_data['exitload'] = data['exitload'][0]['exit_load_remark'];
-
-        const response2 = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${code}`);
+    
+        const response2 = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getSchemeNavJSON%${mf_code}`);
         const nav = await response2.json();
 
         final_data['nav'] = nav[nav.length - 1]['nav'];
@@ -30,13 +39,21 @@ const MFPage = async (req, res) => {
         const diffInMs = latestDate - inceptionDate;
         const years = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
         const durationYears = years.toFixed(2);
-
+       
 
         final_data['cagr'] = ((((nav[nav.length - 1]['nav'] / nav[0]['nav']) ** (1 / durationYears)) - 1) * 100).toFixed(2);
 
-        const response3 = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getLatestHoldings%${code},1`);
+        const response3 = await fetch(`https://dotnet.ngenmarkets.com/ngenindia.asmx/ReturnSQLResult?sql=exec%20c_getLatestHoldings%${mf_code},1`);
         const stocks = await response3.json();
         final_data['asset'] = stocks;
+        
+        try {
+            const [results] = await pool.query(`SELECT m.mf_code, s.ISIN, s.Symbol, s.Company, s.CMP, s.PE, s.ROCE, s.ROE, s.PromHold, s.Salesvar, s.ProfitVar, s.OPM, s.CROIC, s.Mar_Cap, s.As_on_date FROM sharad_screener.mf_holdings_data m JOIN sharad_screener.ratios s ON m.ISIN = s.ISIN WHERE m.MF_Code=${mf_code}`);
+            final_data['heatmap'] = results;
+        } catch (err) {
+            console.error('Error fetching heatmap data:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
 
         // const filePath = path.join(__dirname, "data", "isin_to_screener.json");
         // const stock_codes_fetch = await fs.readFile(filePath, "utf-8");
