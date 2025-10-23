@@ -1,5 +1,3 @@
-const { mongo } = require("mongoose");
-const NAV_Data = require("../Model/model.js");
 const pool = require('../Utils/SQL.js');
 
 
@@ -111,5 +109,16 @@ const table_data = async (req, res) => {
 
 }
 
+const get_table_data = async (req,res) => {  
+    
+    try {
+        const [results] = await pool.query('SELECT ISIN,Scheme FROM sharad_static_data.mf_static_data;');
+        res.status(200).json(results);
+    } catch (err) {
+        console.error('Error fetching heatmap data:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
-module.exports = { table_data }; 
+
+module.exports = { table_data, get_table_data }; 
